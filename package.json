@@ -1,0 +1,35 @@
+{
+  "name": "data_table",
+  "version": "1.0.0",
+  "description": "Data Table using Mithril.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel src/index.html",
+    "build": "webpack src/index.js --output bin/app.js -p"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dark-Blaze/Excercise_1_DataTable.git"
+  },
+  "keywords": [
+    "dataTable",
+    "javascript",
+    "mithril.js"
+  ],
+  "author": "Nikhil Varma",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dark-Blaze/Excercise_1_DataTable/issues"
+  },
+  "homepage": "https://github.com/Dark-Blaze/Excercise_1_DataTable#readme",
+  "dependencies": {
+    "mithril": "^1.1.6"
+  },
+  "devDependencies": {
+    "budo": "^11.2.2",
+    "parcel-bundler": "^1.8.1",
+    "webpack": "^4.12.0",
+    "webpack-cli": "^3.0.4"
+  }
+}
