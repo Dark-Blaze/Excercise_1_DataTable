@@ -1,0 +1,10 @@
+node_modules
+bin
+
+
+#VS Code specific files
+.vscode
+.cache
+
+#General build/dist files
+dist
