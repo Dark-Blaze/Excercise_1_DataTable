@@ -1,14 +1,14 @@
-const m = require("mithril");
+const m = require('mithril');
+const Table = require('./components/Table');
 
-var MyComponent = {
+var AppComponent = {
     view: function() {
       return (
         <main>
-          <h1>Hello world</h1>
+          <h1><Table /></h1>
         </main>
       )
     }
   }
 
-  m.render(document.body, <MyComponent />)
-
+m.render(document.body, <AppComponent />)

@@ -4,7 +4,7 @@
   "description": "Data Table using Mithril.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "ospec",
     "start": "webpack -d --watch"
   },
   "repository": {
