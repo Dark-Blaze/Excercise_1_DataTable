@@ -1,14 +1,20 @@
-const m = require('mithril');
-const Table = require('./components/Table');
+const m = require("mithril");
+const Table = require("./components/Table");
 
 var AppComponent = {
-    view: function() {
-      return (
-        <main>
-          <h1><Table /></h1>
-        </main>
-      )
-    }
+  view: function() {
+    const config = {
+      page: {
+        size: 10
+      },
+    };
+    
+    return (
+      <div>
+          <Table config={config}/>
+      </div>
+    );
   }
+};
 
-m.render(document.body, <AppComponent />)
+m.render(document.body, <AppComponent />);
