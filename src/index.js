@@ -22,4 +22,4 @@ var AppComponent = {
   }
 };
 
-m.render(document.body, <AppComponent />);
+m.mount(document.body, AppComponent);

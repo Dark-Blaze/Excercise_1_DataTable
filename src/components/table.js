@@ -1,11 +1,11 @@
 const m = require("mithril");
 const Data = require("../model/Data");
 const Button = require("./Button");
+var Stream = require("mithril/stream")
 
 Array.prototype.first = () => {
   return this && this[0];
-}
-
+};
 
 var utils = {
   isObject: obj => {
@@ -17,33 +17,46 @@ var utils = {
     }
 
     return data.map(obj => {
-      if(utils.isObject(obj)){
+      if (utils.isObject(obj)) {
         return Object.values(obj).map(val => {
           return m(template, { val });
         });
       }
-      return m(template, { obj }) 
+      return m(template, { obj });
     });
   }
 };
 
-var repeater = utils.repeat.bind(utils);
-
+var repeat = utils.repeat.bind(utils);
+var u = 0;
 var Table = {
-  controller: vnode => {},
+  controller: vnode => {
+  },
+  compState: {
+    sampleVar : new Stream(234) 
+  },
+  update:(ref)=>{
+    let setState = () =>{ref.sampleVar = ++u}
+    return setState;
+  },
   view: vnode => {
     let pageSize = vnode.attrs.pageSize;
     let data = vnode.attrs.data;
     let cols = vnode.attrs.columns;
     let startIndex = 0;
     let currentPageIndex = 0;
-
+    let length = Data.length;
+    let lastIndex = startIndex + pageSize > length ? length : startIndex + pageSize;
+    let slicedData = Data.slice(startIndex, lastIndex);
+    console.log(Table)
     return (
       <div>
-        <Button value="asdf" />
-        <div class="table mw8 center">
+        <Button value="Previous" onclick={vnode.state.update} ref={vnode.state.compState}/>
+        <Button value="Next" onclick={vnode.state.update} ref={vnode.state.compState}/>
+        {vnode.state.compState.sampleVar}
+        { <div class="table mw8 center">
           <div class="table-header cf bg-light-gray">
-            {repeater(cols, {
+            {repeat(cols, {
               view: v =>
                 m(
                   "div",
@@ -51,13 +64,10 @@ var Table = {
                   v.attrs.obj
                 )
             })}
-            {/* {cols.map(col => {
-              return <div class="cell fl w-20-ns pa2 b f4 ba tc">{col}</div>;
-            })} */}
           </div>
           <div class="table-body">
             <div class="table-row">
-              {repeater(Data, {
+              {repeat(slicedData, {
                 view: v =>
                   m(
                     "div",
@@ -67,7 +77,7 @@ var Table = {
               })}
             </div>
           </div>
-        </div>
+        </div> }
       </div>
     );
   }
