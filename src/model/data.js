@@ -1,6 +1,6 @@
 var Data = []
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 1000000; i++) {
     Data.push({
     "1": i,
     "21": 24234,
