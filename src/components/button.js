@@ -3,7 +3,9 @@ const m = require("mithril");
 var Button = {
   view: function(vnode) {
     return (
-        <button class="btn">{vnode.attrs.value}</button>
+      <button class={vnode.attrs.class} onclick={vnode.attrs.onclick(vnode.attrs.ref)}>
+        {vnode.attrs.value}
+      </button>
     );
   }
 };

@@ -1,14 +1,25 @@
-const m = require('mithril');
-const Table = require('./components/Table');
+const m = require("mithril");
+const Table = require("./components/Table");
 
 var AppComponent = {
-    view: function() {
-      return (
-        <main>
-          <h1><Table /></h1>
-        </main>
-      )
-    }
-  }
+  view: function() {
 
-m.render(document.body, <AppComponent />)
+    const config = {
+      page: {
+        size: 10
+      }
+    };
+
+    return (
+      <div>
+        <Table
+          pageSize={config.page.size}
+          data={[]}
+          columns={["Locn_Nrb", "online_ord_Id", "KSN_Id", "SKU_Pro_Type_Cd"]}
+        />
+      </div>
+    );
+  }
+};
+
+m.mount(document.body, AppComponent);
