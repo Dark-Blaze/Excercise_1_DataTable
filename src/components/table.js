@@ -209,7 +209,7 @@ var Table = {
                 view: v =>
                   m(
                     "div",
-                    { class: "cell fl w-20-ns pa2 b f4 ba tc" },
+                    { class: "cell fl w-25-ns pa2 b f4 ba tc" },
                     v.attrs.obj
                   )
               })}
