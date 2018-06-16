@@ -7,12 +7,10 @@ Array.prototype.first = () => {
   return this && this[0];
 };
 
-
 var repeat = Utils.repeat.bind(Utils);
 var u = 0;
 var Table = {
   controller: vnode => {
-    
     console.log("controller");
   },
   compState: {
@@ -22,101 +20,76 @@ var Table = {
     lastIndex: 0
   },
   setPreviousRow: ref => {
-    
-    console.log("setPreviousRow");
     return () => {
       if (ref.startIndex < 1) {
-    console.log(" setPreviousRow - first = " +  ref.startIndex +", last = "+ ref.lastIndex + ",page = " + ref.pageSize);
-        return;
+    return;
       }
       --ref.startIndex;
       --ref.lastIndex;
-      console.log("setPreviousRow - first = " +  ref.startIndex +", last = "+ ref.lastIndex + ",page = " + ref.pageSize);
-      return;
+    return;
     };
   },
   setNextRow: ref => {
-    
-    console.log("setNextRow");
     return () => {
       if (ref.lastIndex >= Data.length) {
         ref.lastIndex = Data.length;
         ref.startIndex = ref.lastIndex - ref.pageSize;
-    console.log("setNextRow");
-    console.log(" setNextRow - first = " +  ref.startIndex +", last = "+ ref.lastIndex + ",page = " + ref.pageSize);
-        return;
+    return;
       }
       ++ref.startIndex;
       ++ref.lastIndex;
-      console.log("setNextRow - first = " +  ref.startIndex +", last = "+ ref.lastIndex + ",page = " + ref.pageSize);
-      return;
+    return;
     };
   },
   setPreviousPage: ref => {
-    
-    console.log("setPreviousPage");
     return () => {
-      if (ref.startIndex > 0) {
-        ref.startIndex -= ref.pageSize;
+    if (ref.startIndex > 0) {
+        if((ref.startIndex - ref.pageSize) <= 0){
+          ref.startIndex = 0;
+        }else{
+          ref.startIndex -= ref.pageSize;
+        }
         ref.lastIndex -= ref.pageSize;
-    console.log("setPreviousPage");
-    console.log("setPreviousPage - first = " +  ref.startIndex +", last = "+ ref.lastIndex + ",page = " + ref.pageSize);
       }
-    console.log("setPreviousPage");
-    console.log("setPreviousPage - first = " +  ref.startIndex +", last = "+ ref.lastIndex + ",page = " + ref.pageSize);
-    };
+  };
   },
   setNextPage: ref => {
-    
-    console.log("setNextPage");
     return () => {
-    console.log("setNextPage");
-    console.log(" setNextPage - first = " +  ref.startIndex +", last = "+ ref.lastIndex + ",page = " + ref.pageSize);
-      if (ref.startIndex < Data.length - ref.pageSize) {
+    if (ref.startIndex < Data.length - ref.pageSize) {
         ref.startIndex += ref.pageSize;
         ref.lastIndex += ref.pageSize;
-    console.log("setNextPage");
-    console.log("setNextPage - first = " +  ref.startIndex +", last = "+ ref.lastIndex + ",page = " + ref.pageSize);
       }
-    };
+  };
   },
   setLastPage: ref => {
-    
-    console.log("setLastPage");
     return () => {
+      if(ref.lastIndex == Data.length){
+    return;
+      }
       ref.startIndex = Data.length - ref.pageSize;
       ref.lastIndex = Data.length;
-    console.log("setLastPage");
-    console.log("setLastPage - first = " +  ref.startIndex +", last = "+ ref.lastIndex + ",page = " + ref.pageSize);
-    };
+  };
   },
   setFirstPage: ref => {
-    
-    console.log("setFirstPage");
     return () => {
-      ref.startIndex = 0;
+    ref.startIndex = 0;
       ref.lastIndex = ref.startIndex + ref.pageSize;
-    console.log("setFirstPage");
-    console.log("setFirstPage - first = " +  ref.startIndex +", last = "+ ref.lastIndex + ",page = " + ref.pageSize);
     };
   },
   onchange: (ref, val) => {
-    
-    console.log("onchange");
     ref.pageSize = val;
     ref.lastIndex = ref.startIndex + ref.pageSize;
     m.redraw();
   },
   view: vnode => {
     let cols = vnode.attrs.columns;
-    vnode.state.compState.lastIndex = vnode.state.compState.startIndex + vnode.state.compState.pageSize;
+    vnode.state.compState.lastIndex =
+      vnode.state.compState.startIndex + vnode.state.compState.pageSize;
     let slicedData = Data.slice(
       vnode.state.compState.startIndex,
       vnode.state.compState.lastIndex
     );
-    
-    console.log("from view - first = " +  vnode.state.compState.startIndex +", last = "+ vnode.state.compState.lastIndex + ",page = " + vnode.state.compState.pageSize);
-    console.log("from view");
+
     return (
       <div>
         <div class=" actions pb3 mw9 center ">
@@ -150,9 +123,9 @@ var Table = {
                   class="w3 pa2"
                   type="text"
                   onchange={event => {
-                    debugger;
-
-                    vnode.state.compState.pageSize = parseInt(event.currentTarget.value);
+                    vnode.state.compState.pageSize = parseInt(
+                      event.currentTarget.value
+                    );
                   }}
                   value={vnode.state.compState.pageSize}
                 />
@@ -172,8 +145,12 @@ var Table = {
                   class="w3 pa2"
                   type="text"
                   onchange={event => {
-                    vnode.state.compState.startIndex =
-                    parseInt(event.currentTarget.value);
+                    vnode.state.compState.startIndex = parseInt(
+                      event.currentTarget.value
+                    );
+                    if(Data.length - vnode.state.compState.startIndex < vnode.state.compState.pageSize){
+                      vnode.state.compState.pageSize = Data.length - vnode.state.compState.startIndex
+                    }
                     vnode.state.compState.lastIndex =
                       vnode.state.compState.startIndex +
                       vnode.state.compState.pageSize;
