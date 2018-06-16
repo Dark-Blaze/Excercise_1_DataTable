@@ -2,6 +2,8 @@ const m = require("mithril");
 const Data = require("../model/Data");
 const Button = require("./Button");
 import s from "mithril/stream";
+import { debug } from "util";
+
 Array.prototype.first = () => {
   return this && this[0];
 };
@@ -29,22 +31,18 @@ var utils = {
 var repeat = utils.repeat.bind(utils);
 var u = 0;
 var Table = {
-  controller: vnode => {},
+  controller: vnode => {
+    console.log("controller")
+
+  },
   compState: {
-    sampleVar: s(234),
     startIndex: 0,
-    currentIndex: s(0),
-    pageSize: 0,
+    pageSize: 10,
     cols: [],
     lastIndex: 0
   },
-  update: ref => {
-    let setState = () => {
-      ref.sampleVar = ++u;
-    };
-    return setState;
-  },
   setPreviousRow: ref => {
+    console.log("setPreviousRow")
     return () => {
       if (ref.startIndex < 1) {
         return;
@@ -55,6 +53,7 @@ var Table = {
     };
   },
   setNextRow: ref => {
+    console.log("setNextRow")
     return () => {
       if (ref.lastIndex >= Data.length) {
         ref.lastIndex = Data.length;
@@ -67,35 +66,44 @@ var Table = {
     };
   },
   setPreviousPage: ref => {
+    console.log("setPreviousPage")
     return () => {
-      if(ref.startIndex > 0 ){
+      if (ref.startIndex > 0) {
         ref.startIndex -= ref.pageSize;
         ref.lastIndex -= ref.pageSize;
       }
     };
   },
   setNextPage: ref => {
+    console.log("setNextPage")
     return () => {
-      if((ref.startIndex < (Data.length - ref.pageSize))){
-        ref.startIndex += ref.pageSize
+      if (ref.startIndex < Data.length - ref.pageSize) {
+        ref.startIndex += ref.pageSize;
         ref.lastIndex += ref.pageSize;
       }
     };
   },
-  setLastPage:ref =>{
-    return() => {
-        ref.startIndex = Data.length - ref.pageSize;
-        ref.lastIndex = Data.length;
-    }
+  setLastPage: ref => {
+    console.log("setLastPage")
+    return () => {
+      ref.startIndex = Data.length - ref.pageSize;
+      ref.lastIndex = Data.length;
+    };
   },
-  setFirstPage:ref =>{
-    return() => {
-        ref.startIndex = 0;
-        ref.lastIndex = ref.startIndex + ref.pageSize;
-    }
+  setFirstPage: ref => {
+    console.log("setFirstPage")
+    return () => {
+      ref.startIndex = 0;
+      ref.lastIndex = ref.startIndex + ref.pageSize;
+    };
+  },
+  onchange: (ref, val) => {
+    console.log("onchange")
+    ref.pageSize = val;
+    ref.lastIndex = ref.startIndex + ref.pageSize;
+    m.redraw();
   },
   view: vnode => {
-    vnode.state.compState.pageSize = vnode.attrs.pageSize;
     let cols = vnode.attrs.columns;
     vnode.state.compState.lastIndex =
       vnode.state.compState.startIndex + vnode.state.compState.pageSize;
@@ -103,8 +111,21 @@ var Table = {
       vnode.state.compState.startIndex,
       vnode.state.compState.lastIndex
     );
+    console.log("from view")
     return (
       <div>
+        <div class="stat">
+          Showing 
+          {/* <input type="text" onchange={event => {
+            const val = event.currentTarget.value;
+            vnode.state.onchange(vnode.state.compState, val)
+          }} /> */}
+          asdfasdf
+          <input type="text" onchange={event => {
+            vnode.state.compState.pageSize = event.currentTarget.value;
+            }} value={vnode.state.compState.pageSize}/>
+          {vnode.state.compState.pageSize}
+        </div>
         <Button
           value="First Page"
           onclick={vnode.state.setFirstPage}
