@@ -32,8 +32,7 @@ var repeat = utils.repeat.bind(utils);
 var u = 0;
 var Table = {
   controller: vnode => {
-    console.log("controller")
-
+    console.log("controller");
   },
   compState: {
     startIndex: 0,
@@ -42,7 +41,7 @@ var Table = {
     lastIndex: 0
   },
   setPreviousRow: ref => {
-    console.log("setPreviousRow")
+    console.log("setPreviousRow");
     return () => {
       if (ref.startIndex < 1) {
         return;
@@ -53,7 +52,7 @@ var Table = {
     };
   },
   setNextRow: ref => {
-    console.log("setNextRow")
+    console.log("setNextRow");
     return () => {
       if (ref.lastIndex >= Data.length) {
         ref.lastIndex = Data.length;
@@ -66,7 +65,7 @@ var Table = {
     };
   },
   setPreviousPage: ref => {
-    console.log("setPreviousPage")
+    console.log("setPreviousPage");
     return () => {
       if (ref.startIndex > 0) {
         ref.startIndex -= ref.pageSize;
@@ -75,7 +74,7 @@ var Table = {
     };
   },
   setNextPage: ref => {
-    console.log("setNextPage")
+    console.log("setNextPage");
     return () => {
       if (ref.startIndex < Data.length - ref.pageSize) {
         ref.startIndex += ref.pageSize;
@@ -84,21 +83,21 @@ var Table = {
     };
   },
   setLastPage: ref => {
-    console.log("setLastPage")
+    console.log("setLastPage");
     return () => {
       ref.startIndex = Data.length - ref.pageSize;
       ref.lastIndex = Data.length;
     };
   },
   setFirstPage: ref => {
-    console.log("setFirstPage")
+    console.log("setFirstPage");
     return () => {
       ref.startIndex = 0;
       ref.lastIndex = ref.startIndex + ref.pageSize;
     };
   },
   onchange: (ref, val) => {
-    console.log("onchange")
+    console.log("onchange");
     ref.pageSize = val;
     ref.lastIndex = ref.startIndex + ref.pageSize;
     m.redraw();
@@ -111,52 +110,98 @@ var Table = {
       vnode.state.compState.startIndex,
       vnode.state.compState.lastIndex
     );
-    console.log("from view")
+    console.log("from view");
     return (
       <div>
-        <div class="stat">
-          Showing 
-          {/* <input type="text" onchange={event => {
+        <div class=" actions pb3 mw9 center ">
+          <div class="cf ph2-ns">
+            <div class="fl w-100 w-third-ns pa3">
+              <div class="fr">
+                <Button
+                  class="bg-dark-blue white bl ba br3 br--left-ns b--near-white pa2"
+                  value="|<"
+                  onclick={vnode.state.setFirstPage}
+                  ref={vnode.state.compState}
+                />
+                <Button
+                  class="bg-dark-blue white ba b--near-white pa2"
+                  value="<<"
+                  onclick={vnode.state.setPreviousPage}
+                  ref={vnode.state.compState}
+                />
+                <Button
+                  class="bg-dark-blue white ba b--near-white pa2"
+                  value="<"
+                  onclick={vnode.state.setPreviousRow}
+                  ref={vnode.state.compState}
+                />
+              </div>
+            </div>
+            <div class="stat fl w-100 w-third-ns pa2">
+              <div class="fl pa2">
+                <span class="pr1">Showing </span>
+                {/* <input type="text" onchange={event => {
             const val = event.currentTarget.value;
             vnode.state.onchange(vnode.state.compState, val)
           }} /> */}
-          asdfasdf
-          <input type="text" onchange={event => {
-            vnode.state.compState.pageSize = event.currentTarget.value;
-            }} value={vnode.state.compState.pageSize}/>
-          {vnode.state.compState.pageSize}
+                <input
+                  class="w3 pa2"
+                  type="text"
+                  onchange={event => {
+                    vnode.state.compState.pageSize = event.currentTarget.value;
+                  }}
+                  value={vnode.state.compState.pageSize}
+                />
+              </div>
+              <div class="fl pa2">
+                <span class="pr1">rows out of </span>
+                <input
+                  class="w3 pa2"
+                  type="text"
+                  value={Data.length}
+                  disabled
+                />
+              </div>
+              <div class="fl pa2">
+                <span class="pr1">starting at row </span>
+                <input
+                  class="w3 pa2"
+                  type="text"
+                  onchange={event => {
+                    vnode.state.compState.startIndex =
+                      event.currentTarget.value;
+                    vnode.state.compState.lastIndex =
+                      vnode.state.compState.startIndex +
+                      vnode.state.compState.pageSize;
+                  }}
+                  value={vnode.state.compState.startIndex}
+                />
+              </div>
+            </div>
+            <div class="fl w-100 w-third-ns pa3">
+              <div class="fl">
+                <Button
+                  class="bg-dark-blue white ba b--near-white pa2"
+                  value=">"
+                  onclick={vnode.state.setNextRow}
+                  ref={vnode.state.compState}
+                />
+                <Button
+                  class="bg-dark-blue white ba b--near-white pa2"
+                  value=">>"
+                  onclick={vnode.state.setNextPage}
+                  ref={vnode.state.compState}
+                />
+                <Button
+                  class="bg-dark-blue white ba br3 br--right-ns b--near-white pa2"
+                  value=">|"
+                  onclick={vnode.state.setLastPage}
+                  ref={vnode.state.compState}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        <Button
-          value="First Page"
-          onclick={vnode.state.setFirstPage}
-          ref={vnode.state.compState}
-        />
-        <Button
-          value="Previous Page"
-          onclick={vnode.state.setPreviousPage}
-          ref={vnode.state.compState}
-        />
-        <Button
-          value="Previous"
-          onclick={vnode.state.setPreviousRow}
-          ref={vnode.state.compState}
-        />
-        <Button
-          value="Next"
-          onclick={vnode.state.setNextRow}
-          ref={vnode.state.compState}
-        />
-        <Button
-          value="Next Page"
-          onclick={vnode.state.setNextPage}
-          ref={vnode.state.compState}
-        />
-        <Button
-          value="Last Page"
-          onclick={vnode.state.setLastPage}
-          ref={vnode.state.compState}
-        />
-
         {
           <div class="table mw8 center">
             <div class="table-header cf bg-light-gray">
