@@ -10,6 +10,8 @@ Array.prototype.first = () => {
 var repeat = Utils.repeat.bind(Utils);
 var u = 0;
 var Table = {
+  oncreate:()=>{
+  },
   controller: vnode => {
     console.log("controller");
   },
@@ -92,35 +94,36 @@ var Table = {
 
     return (
       <div>
-        <div class=" actions pb3 mw9 center ">
-          <div class="cf ph2-ns">
-            <div class="fl w-100 w-third-ns pa3">
+        <div class=" actions pb3  center ">
+          <div class="cf ph2-ns flex  items-center">
+            <div class="fl w-25 pt2">
               <div class="fr">
                 <Button
-                  class="bg-dark-blue white bl ba br3 br--left-ns b--near-white pa2"
+                  class="bg-blue white bl ba br3 br--left-ns b--blue pa2"
                   value="|<"
                   onclick={vnode.state.setFirstPage}
                   ref={vnode.state.compState}
                 />
                 <Button
-                  class="bg-dark-blue white ba b--near-white pa2"
+                  class="bg-blue white ba b--blue pa2"
                   value="<<"
                   onclick={vnode.state.setPreviousPage}
                   ref={vnode.state.compState}
                 />
                 <Button
-                  class="bg-dark-blue white ba b--near-white pa2"
+                  class="bg-blue white ba b--blue pa2"
                   value="<"
                   onclick={vnode.state.setPreviousRow}
                   ref={vnode.state.compState}
                 />
               </div>
             </div>
-            <div class="stat fl w-100 w-third-ns pa2">
+            <div class="fl  w-50 pt2">
+            <div class="flex justify-center">
               <div class="fl pa2">
-                <span class="pr1">Showing </span>
+                <span class="pr1 ">Showing </span>
                 <input
-                  class="w3 pa2"
+                  class=" pa2 w3"
                   type="text"
                   onchange={event => {
                     vnode.state.compState.pageSize = parseInt(
@@ -133,7 +136,7 @@ var Table = {
               <div class="fl pa2">
                 <span class="pr1">rows out of </span>
                 <input
-                  class="w3 pa2"
+                  class="pa2 w4"
                   type="text"
                   value={Data.length}
                   disabled
@@ -142,7 +145,7 @@ var Table = {
               <div class="fl pa2">
                 <span class="pr1">starting at row </span>
                 <input
-                  class="w3 pa2"
+                  class="pa2 w3"
                   type="text"
                   onchange={event => {
                     vnode.state.compState.startIndex = parseInt(
@@ -158,23 +161,24 @@ var Table = {
                   value={vnode.state.compState.startIndex}
                 />
               </div>
+              </div>
             </div>
-            <div class="fl w-100 w-third-ns pa3">
-              <div class="fl">
+            <div class="fl w-25 pt2">
+              <div class="fl ">
                 <Button
-                  class="bg-dark-blue white ba b--near-white pa2"
+                  class="bg-blue white ba b--blue pa2"
                   value=">"
                   onclick={vnode.state.setNextRow}
                   ref={vnode.state.compState}
                 />
                 <Button
-                  class="bg-dark-blue white ba b--near-white pa2"
+                  class="bg-blue white ba b--blue pa2"
                   value=">>"
                   onclick={vnode.state.setNextPage}
                   ref={vnode.state.compState}
                 />
                 <Button
-                  class="bg-dark-blue white ba br3 br--right-ns b--near-white pa2"
+                  class="bg-blue white ba br3 br--right-ns b--blue pa2"
                   value=">|"
                   onclick={vnode.state.setLastPage}
                   ref={vnode.state.compState}
@@ -184,13 +188,14 @@ var Table = {
           </div>
         </div>
         {
-          <div class="table mw8 center">
+          <div class="table mw9 center">
+          <div>
             <div class="table-header cf bg-light-gray">
               {repeat(cols, {
                 view: v =>
                   m(
                     "div",
-                    { class: "cell fl w-25-ns pa2 b f4 ba tc" },
+                    { class: "cell fl w-20-ns pa2 b f4 ba tc" },
                     v.attrs.obj
                   )
               })}
@@ -201,11 +206,12 @@ var Table = {
                   view: v =>
                     m(
                       "div",
-                      { class: "cell fl w-100 w-25-ns pa2 bb br bl f3 " },
+                      { class: "cell fl w-100 w-20-ns pa2 bb br bl f3 " },
                       v.attrs.val
                     )
                 })}
               </div>
+            </div>
             </div>
           </div>
         }
