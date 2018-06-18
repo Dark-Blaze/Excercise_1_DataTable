@@ -4,13 +4,6 @@ const Button = require("./Button");
 const Utils = require("../lib/utils");
 const Pager = require('../lib/Pager');
 
-
-
-
-Array.prototype.first = () => {
-  return this && this[0];
-};
-
 var repeat = Utils.repeat.bind(Utils);
 var page;
 
@@ -31,7 +24,7 @@ var Table = {
 
   },
   
-  setNextPage: ref => {
+  getNextPage: ref => {
     return () =>{
       [ref.startIndex, ref.lastIndex] = page.getNextPage(ref.startIndex, ref.lastIndex);
     }
@@ -41,29 +34,29 @@ var Table = {
       [ref.startIndex, ref.lastIndex] = page.getNextRow(ref.startIndex, ref.lastIndex);
     }
   },
-  setLastPage: ref => {
+  getLastPage: ref => {
     return () => {
       [ref.startIndex, ref.lastIndex] = page.getLastPage();
     }
   },
-  setPreviousRow: ref => {
+  getPreviousRow: ref => {
     return () => {
       [ref.startIndex, ref.lastIndex] = page.getPreviousRow(ref.startIndex, ref.lastIndex);
     }
   },
-  setPreviousPage: ref => {
+  getPreviousPage: ref => {
     return () => {
       [ref.startIndex, ref.lastIndex] = page.getPreviousPage(ref.startIndex, ref.lastIndex);
     }
   },
-  setFirstPage: ref => {
+  getFirstPage: ref => {
     return () => {
       [ref.startIndex, ref.lastIndex] = page.getFirstPage();
     };
   },
   setPageSize: (ref, val) =>{
     ref.pageSize = parseInt(val);
-    page.setPageSize(val);
+    page.setPageSize(ref.pageSize);
   },
   setStartRow:(ref, val)=>{
       [ref.startIndex, ref.lastIndex] = page.getPageByStartRow(ref.startIndex, ref.lastIndex, val);
@@ -81,17 +74,17 @@ var Table = {
                 <Button
                   class="bg-blue white bl ba br3 br--left-ns b--blue pa2"
                   value="|<"
-                  onclick={vnode.state.setFirstPage(vnode.state.compState)}
+                  onclick={vnode.state.getFirstPage(vnode.state.compState)}
                 />
                 <Button
                   class="bg-blue white ba b--blue pa2"
                   value="<<"
-                  onclick={vnode.state.setPreviousPage(vnode.state.compState)}
+                  onclick={vnode.state.getPreviousPage(vnode.state.compState)}
                 />
                 <Button
                   class="bg-blue white ba b--blue pa2"
                   value="<"
-                  onclick={vnode.state.setPreviousRow(vnode.state.compState)}
+                  onclick={vnode.state.getPreviousRow(vnode.state.compState)}
                 />
               </div>
             </div>
@@ -140,12 +133,12 @@ var Table = {
                 <Button
                   class="bg-blue white ba b--blue pa2"
                   value=">>"
-                  onclick={vnode.state.setNextPage(vnode.state.compState)}
+                  onclick={vnode.state.getNextPage(vnode.state.compState)}
                 />
                 <Button
                   class="bg-blue white ba br3 br--right-ns b--blue pa2"
                   value=">|"
-                  onclick={vnode.state.setLastPage(vnode.state.compState)}
+                  onclick={vnode.state.getLastPage(vnode.state.compState)}
                 />
               </div>
             </div>

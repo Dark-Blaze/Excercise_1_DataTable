@@ -4,7 +4,7 @@ function Pager(pageSize, length) {
 }
 
 Pager.prototype.isFirstPage = function(si) {
-  return this.pageSize - si < this.pageSize;
+  return this.pageSize - si <= this.pageSize;
 };
 
 Pager.prototype.isFirstRow = function(si) {
@@ -70,8 +70,8 @@ Pager.prototype.getPreviousRow = function(si, li) {
 };
 
 Pager.prototype.getPreviousPage = function(si, li) {
-  if (si > 0) {
-    if (si - this.pageSize <= 0) {
+  if (!this.isFirstRow(si)) {
+    if (this.isFirstPage(si)) {
       si = 0;
     } else {
       si -= this.pageSize;
@@ -86,7 +86,6 @@ Pager.prototype.setPageSize = function(size) {
 };
 
 Pager.prototype.getPageByStartRow = function(si, li, val) {
-  debugger;
   si = parseInt(val);
   if (this.length - si < this.pageSize) {
     this.pageSize = this.length - si;
