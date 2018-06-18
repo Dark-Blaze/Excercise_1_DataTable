@@ -71,7 +71,7 @@ Pager.prototype.getPreviousRow = function(si, li) {
 
 Pager.prototype.getPreviousPage = function(si, li) {
   if (!this.isFirstRow(si)) {
-    if (this.isFirstPage(si)) {
+    if (si - this.pageSize <= 0) {
       si = 0;
     } else {
       si -= this.pageSize;
