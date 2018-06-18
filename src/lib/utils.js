@@ -1,5 +1,11 @@
 const m = require("mithril");
 
+
+Array.prototype.first = () => {
+  return this && this[0];
+};
+
+
 var Utils = {
   isObject: obj => {
     return typeof obj == "object";

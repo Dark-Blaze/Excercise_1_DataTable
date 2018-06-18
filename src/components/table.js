@@ -2,95 +2,75 @@ const m = require("mithril");
 const Data = require("../model/Data");
 const Button = require("./Button");
 const Utils = require("../lib/utils");
+const Pager = require('../lib/Pager');
+
+
+
 
 Array.prototype.first = () => {
   return this && this[0];
 };
 
 var repeat = Utils.repeat.bind(Utils);
-var u = 0;
+var page;
+
+
 var Table = {
-  oncreate:()=>{
+  oninit:(vnode)=>{
+    console.log("oninit")
+    vnode.state["compState"] =  {
+      startIndex: 0,
+      pageSize: 0,
+      cols: [],
+      lastIndex: 0
+    }
+    vnode.state.compState.pageSize = vnode.attrs.pageSize;
+    vnode.state.compState.cols = vnode.attrs.columns;
+    vnode.state.compState.lastIndex = vnode.state.compState.startIndex + vnode.state.compState.pageSize;
+    page = new Pager(vnode.state.compState.pageSize, Data.length);
+
   },
-  controller: vnode => {
-    console.log("controller");
-  },
-  compState: {
-    startIndex: 0,
-    pageSize: 10,
-    cols: [],
-    lastIndex: 0
-  },
-  setPreviousRow: ref => {
-    return () => {
-      if (ref.startIndex < 1) {
-    return;
-      }
-      --ref.startIndex;
-      --ref.lastIndex;
-    return;
-    };
+  
+  setNextPage: ref => {
+    return () =>{
+      [ref.startIndex, ref.lastIndex] = page.getNextPage(ref.startIndex, ref.lastIndex);
+    }
   },
   setNextRow: ref => {
     return () => {
-      if (ref.lastIndex >= Data.length) {
-        ref.lastIndex = Data.length;
-        ref.startIndex = ref.lastIndex - ref.pageSize;
-    return;
-      }
-      ++ref.startIndex;
-      ++ref.lastIndex;
-    return;
-    };
-  },
-  setPreviousPage: ref => {
-    return () => {
-    if (ref.startIndex > 0) {
-        if((ref.startIndex - ref.pageSize) <= 0){
-          ref.startIndex = 0;
-        }else{
-          ref.startIndex -= ref.pageSize;
-        }
-        ref.lastIndex -= ref.pageSize;
-      }
-  };
-  },
-  setNextPage: ref => {
-    return () => {
-    if (ref.startIndex < Data.length - ref.pageSize) {
-        ref.startIndex += ref.pageSize;
-        ref.lastIndex += ref.pageSize;
-      }
-  };
+      [ref.startIndex, ref.lastIndex] = page.getNextRow(ref.startIndex, ref.lastIndex);
+    }
   },
   setLastPage: ref => {
     return () => {
-      if(ref.lastIndex == Data.length){
-    return;
-      }
-      ref.startIndex = Data.length - ref.pageSize;
-      ref.lastIndex = Data.length;
-  };
+      [ref.startIndex, ref.lastIndex] = page.getLastPage();
+    }
+  },
+  setPreviousRow: ref => {
+    return () => {
+      [ref.startIndex, ref.lastIndex] = page.getPreviousRow(ref.startIndex, ref.lastIndex);
+    }
+  },
+  setPreviousPage: ref => {
+    return () => {
+      [ref.startIndex, ref.lastIndex] = page.getPreviousPage(ref.startIndex, ref.lastIndex);
+    }
   },
   setFirstPage: ref => {
     return () => {
-    ref.startIndex = 0;
-      ref.lastIndex = ref.startIndex + ref.pageSize;
+      [ref.startIndex, ref.lastIndex] = page.getFirstPage();
     };
   },
-  onchange: (ref, val) => {
-    ref.pageSize = val;
-    ref.lastIndex = ref.startIndex + ref.pageSize;
-    m.redraw();
+  setPageSize: (ref, val) =>{
+    ref.pageSize = parseInt(val);
+    page.setPageSize(val);
+  },
+  setStartRow:(ref, val)=>{
+      [ref.startIndex, ref.lastIndex] = page.getPageByStartRow(ref.startIndex, ref.lastIndex, val);
   },
   view: vnode => {
-    let cols = vnode.attrs.columns;
-    vnode.state.compState.lastIndex =
-      vnode.state.compState.startIndex + vnode.state.compState.pageSize;
-    let slicedData = Data.slice(
-      vnode.state.compState.startIndex,
-      vnode.state.compState.lastIndex
-    );
+    vnode.state.compState.lastIndex = vnode.state.compState.startIndex + vnode.state.compState.pageSize;
+    let slicedData = Data.slice(vnode.state.compState.startIndex,vnode.state.compState.lastIndex);
 
     return (
       <div>
@@ -101,20 +81,17 @@ var Table = {
                 <Button
                   class="bg-blue white bl ba br3 br--left-ns b--blue pa2"
                   value="|<"
-                  onclick={vnode.state.setFirstPage}
-                  ref={vnode.state.compState}
+                  onclick={vnode.state.setFirstPage(vnode.state.compState)}
                 />
                 <Button
                   class="bg-blue white ba b--blue pa2"
                   value="<<"
-                  onclick={vnode.state.setPreviousPage}
-                  ref={vnode.state.compState}
+                  onclick={vnode.state.setPreviousPage(vnode.state.compState)}
                 />
                 <Button
                   class="bg-blue white ba b--blue pa2"
                   value="<"
-                  onclick={vnode.state.setPreviousRow}
-                  ref={vnode.state.compState}
+                  onclick={vnode.state.setPreviousRow(vnode.state.compState)}
                 />
               </div>
             </div>
@@ -126,9 +103,7 @@ var Table = {
                   class=" pa2 w3"
                   type="text"
                   onchange={event => {
-                    vnode.state.compState.pageSize = parseInt(
-                      event.currentTarget.value
-                    );
+                    vnode.state.setPageSize(vnode.state.compState, event.currentTarget.value);
                   }}
                   value={vnode.state.compState.pageSize}
                 />
@@ -148,15 +123,7 @@ var Table = {
                   class="pa2 w3"
                   type="text"
                   onchange={event => {
-                    vnode.state.compState.startIndex = parseInt(
-                      event.currentTarget.value
-                    );
-                    if(Data.length - vnode.state.compState.startIndex < vnode.state.compState.pageSize){
-                      vnode.state.compState.pageSize = Data.length - vnode.state.compState.startIndex
-                    }
-                    vnode.state.compState.lastIndex =
-                      vnode.state.compState.startIndex +
-                      vnode.state.compState.pageSize;
+                    vnode.state.setStartRow(vnode.state.compState, event.currentTarget.value);
                   }}
                   value={vnode.state.compState.startIndex}
                 />
@@ -168,20 +135,17 @@ var Table = {
                 <Button
                   class="bg-blue white ba b--blue pa2"
                   value=">"
-                  onclick={vnode.state.setNextRow}
-                  ref={vnode.state.compState}
+                  onclick={vnode.state.setNextRow(vnode.state.compState)}
                 />
                 <Button
                   class="bg-blue white ba b--blue pa2"
                   value=">>"
-                  onclick={vnode.state.setNextPage}
-                  ref={vnode.state.compState}
+                  onclick={vnode.state.setNextPage(vnode.state.compState)}
                 />
                 <Button
                   class="bg-blue white ba br3 br--right-ns b--blue pa2"
                   value=">|"
-                  onclick={vnode.state.setLastPage}
-                  ref={vnode.state.compState}
+                  onclick={vnode.state.setLastPage(vnode.state.compState)}
                 />
               </div>
             </div>
@@ -191,7 +155,7 @@ var Table = {
           <div class="table mw9 center">
           <div>
             <div class="table-header cf bg-light-gray">
-              {repeat(cols, {
+              {repeat(vnode.state.compState.cols, {
                 view: v =>
                   m(
                     "div",
