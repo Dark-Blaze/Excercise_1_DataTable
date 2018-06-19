@@ -12,7 +12,7 @@ Pager.prototype.isFirstRow = function(si) {
 };
 
 Pager.prototype.isLastPage = function(si, li) {
-  return si >= li || li == this.length;
+  return si >= li || li == (this.length) || si == (this.length - 1) ;
 };
 
 Pager.prototype.isLastRow = function(li) {
@@ -91,7 +91,7 @@ Pager.prototype.getPageByStartRow = function(si, li, val) {
     this.pageSize = this.length - si;
   }
   li = si + this.pageSize;
-  return [si, li];
+  return [si, li, this.pageSize];
 };
 
 module.exports = Pager;

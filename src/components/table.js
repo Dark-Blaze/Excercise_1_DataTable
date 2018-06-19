@@ -10,56 +10,42 @@ var page;
 
 var Table = {
   oninit:(vnode)=>{
-    console.log("oninit")
     vnode.state["compState"] =  {
       startIndex: 0,
-      pageSize: 0,
-      cols: [],
-      lastIndex: 0
+      pageSize: parseInt(vnode.attrs.pageSize),
+      cols: vnode.attrs.columns,
+      lastIndex: 0,
+      length : Data.length
     }
-    vnode.state.compState.pageSize = vnode.attrs.pageSize;
-    vnode.state.compState.cols = vnode.attrs.columns;
     vnode.state.compState.lastIndex = vnode.state.compState.startIndex + vnode.state.compState.pageSize;
-    page = new Pager(vnode.state.compState.pageSize, Data.length);
-
+    page = new Pager(vnode.state.compState.pageSize, vnode.state.compState.length);
   },
-  
   getNextPage: ref => {
-    return () =>{
-      [ref.startIndex, ref.lastIndex] = page.getNextPage(ref.startIndex, ref.lastIndex);
-    }
+    return () => [ref.startIndex, ref.lastIndex] = page.getNextPage(ref.startIndex, ref.lastIndex);
   },
   setNextRow: ref => {
-    return () => {
-      [ref.startIndex, ref.lastIndex] = page.getNextRow(ref.startIndex, ref.lastIndex);
-    }
+    return () => [ref.startIndex, ref.lastIndex] = page.getNextRow(ref.startIndex, ref.lastIndex);
   },
   getLastPage: ref => {
-    return () => {
-      [ref.startIndex, ref.lastIndex] = page.getLastPage();
-    }
+    return () => [ref.startIndex, ref.lastIndex] = page.getLastPage();
   },
   getPreviousRow: ref => {
-    return () => {
-      [ref.startIndex, ref.lastIndex] = page.getPreviousRow(ref.startIndex, ref.lastIndex);
-    }
+    return () => [ref.startIndex, ref.lastIndex] = page.getPreviousRow(ref.startIndex, ref.lastIndex);
   },
   getPreviousPage: ref => {
-    return () => {
-      [ref.startIndex, ref.lastIndex] = page.getPreviousPage(ref.startIndex, ref.lastIndex);
-    }
+    return () => [ref.startIndex, ref.lastIndex] = page.getPreviousPage(ref.startIndex, ref.lastIndex);
   },
   getFirstPage: ref => {
-    return () => {
-      [ref.startIndex, ref.lastIndex] = page.getFirstPage();
-    };
+    return () => [ref.startIndex, ref.lastIndex] = page.getFirstPage();
   },
   setPageSize: (ref, val) =>{
     ref.pageSize = parseInt(val);
     page.setPageSize(ref.pageSize);
   },
   setStartRow:(ref, val)=>{
-      [ref.startIndex, ref.lastIndex] = page.getPageByStartRow(ref.startIndex, ref.lastIndex, val);
+    val = parseInt(val);
+    val = (val < ref.length) ? val : ref.length - 1  ;
+    [ref.startIndex, ref.lastIndex, ref.pageSize] = page.getPageByStartRow(ref.startIndex, ref.lastIndex, val);
   },
   view: vnode => {
     vnode.state.compState.lastIndex = vnode.state.compState.startIndex + vnode.state.compState.pageSize;
@@ -94,7 +80,7 @@ var Table = {
                 <span class="pr1 ">Showing </span>
                 <input
                   class=" pa2 w3"
-                  type="text"
+                  type="number"
                   onchange={event => {
                     vnode.state.setPageSize(vnode.state.compState, event.currentTarget.value);
                   }}
@@ -105,7 +91,7 @@ var Table = {
                 <span class="pr1">rows out of </span>
                 <input
                   class="pa2 w4"
-                  type="text"
+                  type="number"
                   value={Data.length}
                   disabled
                 />
@@ -114,7 +100,7 @@ var Table = {
                 <span class="pr1">starting at row </span>
                 <input
                   class="pa2 w3"
-                  type="text"
+                  type="number"
                   onchange={event => {
                     vnode.state.setStartRow(vnode.state.compState, event.currentTarget.value);
                   }}
