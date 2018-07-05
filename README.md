@@ -15,11 +15,11 @@ A basic re-usable Table component in Mithril.js
 Data format(Current) 
 ```javascript 
 let data = [{ 
-    "0": i, 
-    "1": 12 * i, 
-    "21": i * 2 * 23, 
-    "12": i * 3 * 13, 
-    "31": i * 8 * 2 
+    "0": "sample",
+    "1": "sample",
+    "21":"sample",
+    "12":"sample",
+    "31":"sample"
   }] 
 ``` 
  
